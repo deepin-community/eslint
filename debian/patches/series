@@ -1,0 +1,6 @@
+020190820~8c021b5.patch
+1001_use_regenerate-unicode-properties.patch
+1002_use_newer_cheerio.patch
+2005_avoid_cross-spawn.patch
+2008_avoid_json-stable-stringify-without-jsonify.patch
+2010_privacy.patch

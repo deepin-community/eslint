@@ -1,0 +1,39 @@
+Description: Avoid use of node module json-stable-stringify-without-jsonify
+Forwarded: no
+Author: Jonas Smedegaard <dr@jones.dk>
+Last-Update: 2019-10-24
+---
+This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
+--- a/lib/config/config-file.js
++++ b/lib/config/config-file.js
+@@ -17,7 +17,7 @@
+     naming = require("../util/naming"),
+     pathIsInside = require("path-is-inside"),
+     stripComments = require("strip-json-comments"),
+-    stringify = require("json-stable-stringify-without-jsonify"),
++    stringify = require("json-stable-stringify"),
+     importFresh = require("import-fresh");
+ 
+ const debug = require("debug")("eslint:config-file");
+--- a/lib/util/lint-result-cache.js
++++ b/lib/util/lint-result-cache.js
+@@ -13,7 +13,7 @@
+     fileEntryCache = require("file-entry-cache"),
+     hash = require("./hash"),
+     pkg = require("../../package.json"),
+-    stringify = require("json-stable-stringify-without-jsonify");
++    stringify = require("json-stable-stringify");
+ 
+ //-----------------------------------------------------------------------------
+ // Helpers
+--- a/package.json
++++ b/package.json
+@@ -55,7 +55,7 @@
+     "imurmurhash": "^0.1.4",
+     "inquirer": "^6.2.2",
+     "js-yaml": "^3.13.0",
+-    "json-stable-stringify-without-jsonify": "^1.0.1",
++    "json-stable-stringify": "^1.0.1",
+     "levn": "^0.3.0",
+     "lodash": "^4.17.11",
+     "minimatch": "^3.0.4",

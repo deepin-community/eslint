@@ -1,0 +1,165 @@
+#!/usr/bin/make -f
+
+include /usr/share/dpkg/pkg-info.mk
+
+# generate documentation unless nodoc requested
+ifeq (,$(filter nodoc,$(DEB_BUILD_OPTIONS)))
+DOCS = README.html README.txt
+CHANGELOGS = CHANGELOG.html CHANGELOG.txt
+MANPAGES = debian-man/eslint.1
+endif
+
+ESLINT = bin/eslint.js
+MOCHA = mocha --no-timeout
+MOCHA_TAP := $(MOCHA) --reporter tap
+# normalize output with TAP where possible unless terse requested
+ifeq (,$(filter terse,$(DEB_BUILD_OPTIONS)))
+ESLINT += --format tap
+MOCHA += --reporter tap
+else
+ESLINT += --format unix
+MOCHA += --reporter dot --no-colors
+endif
+
+# Work around missing Node.js module table
+MOCHA_SKIP += tests/lib/formatters/table.js
+
+# Work around missing Node.js module eslump
+MOCHA_SKIP += tests/tools/eslint-fuzzer.js
+
+# Work around TypeError: Cannot read property 'create' of undefined
+MOCHA_SKIP += \
+ tests/lib/cli.js \
+ tests/lib/cli-engine.js \
+ tests/lib/util/source-code.js \
+
+# Work around Syntax error in selector
+MOCHA_ISOLATE += \
+ tests/bin/eslint.js
+
+# Work around misc. breakage
+MOCHA_ISOLATE += \
+ tests/lib/config.js \
+ tests/lib/config/config-file.js \
+ tests/lib/config/config-initializer.js \
+ tests/lib/formatters/codeframe.js \
+ tests/lib/formatters/stylish.js \
+ tests/lib/linter.js \
+ tests/lib/rules/camelcase.js \
+ tests/lib/rules/id-length.js \
+ tests/lib/rules/id-match.js \
+ tests/lib/rules/require-await.js \
+ tests/lib/util/glob-utils.js \
+ tests/lib/util/ignored-paths.js \
+ tests/lib/util/lint-result-cache.js \
+ tests/lib/util/node-event-generator.js \
+ tests/lib/util/npm-utils.js \
+ tests/lib/util/source-code-utils.js
+
+# generate manpage with help2man from --help option of Node.js script
+_mkman = NODE_PATH=lib \
+ help2man $(patsubst %,--name %,$3) --no-info --output $2 $1 \
+ || { NODE_PATH=lib $1 --help; false; }
+
+%:
+	dh $@
+
+%.html: %.md
+	pandoc --from gfm-raw_html --to html --standalone --output $@ $<
+
+%.txt: %.md
+	pandoc --from gfm-raw_html --to plain --output $@ $<
+
+# strip extension from executable
+debian-man/eslint:
+	mkdir --parents $(dir $@)
+	cp --force bin/eslint.js $@
+
+# build manpage
+debian-man/eslint.1: %.1: %
+	$(call _mkman, $<, $@, \
+		AST-based pattern checker and linting utility for JavaScript)
+
+override_dh_clean:
+	dh_clean -- $(DOCS) $(CHANGELOGS)
+
+execute_before_dh_auto_build:
+	node tools/update-unicode-utils.js
+
+override_dh_auto_build: $(DOCS) $(CHANGELOGS) $(MANPAGES)
+
+# TODO: drop symlink when possible
+override_dh_auto_test:
+	ln --force --symbolic --no-target-directory internal-rules \
+		tools/eslint-plugin-internal-rules
+#	NODE_PATH=packages:tools $(ESLINT) --report-unused-disable-directives Makefile.js
+#	find conf -type f -name '*.json' \
+#		-exec jsonlint {} +
+#	find docs -type f -name '*.md' \
+#		-exec lintMarkdown {} +
+	NODE_PATH=packages:tools $(ESLINT) --report-unused-disable-directives \
+		$(patsubst %,--ignore-pattern '%',$(ESLINT_SKIP)) \
+		lib conf bin tests/bin tests/lib tests/tools
+	NODE_PATH=packages:tools $(MOCHA) \
+		$(patsubst %,--exclude %,$(MOCHA_SKIP) $(MOCHA_ISOLATE)) \
+		'tests/{bin,lib,tools}/**/*.js'
+	NODE_PATH=packages:tools $(MOCHA_TAP) $(MOCHA_ISOLATE) | debian/tap-todo \
+		'^bin/eslint.js handling crashes prints the error message to stderr in the event of a crash$$' \
+		'^bin/eslint.js handling crashes prints the error message exactly once to stderr in the event of a crash$$' \
+		'^bin/eslint.js emitting a warning for ecmaFeatures does not emit a warning when it does not find an ecmaFeatures option$$' \
+		'^bin/eslint.js emitting a warning for ecmaFeatures emits a warning when it finds an ecmaFeatures option$$' \
+		'^Config "before each" hook for "should not modify baseConfig when format is specified"$$' \
+		'^Config "after each" hook for "should not modify baseConfig when format is specified"$$' \
+		'^ConfigFile write\(\) "before each" hook for "should make sure js config files match linting rules"$$' \
+		'^ConfigFile write\(\) "after each" hook for "should make sure js config files match linting rules"$$' \
+		'^configInitializer "after each" hook for "should create default config"$$' \
+		'^formatter:codeframe "before each" hook for "should return nothing"$$' \
+		'^formatter:codeframe "after each" hook for "should return nothing"$$' \
+		'^formatter:stylish "before each" hook for "should not return message"$$' \
+		'^formatter:stylish "after each" hook for "should not return message"$$' \
+		'^Linter "before each" hook for "should return same version as instance property"$$' \
+		'^Linter "after each" hook for "should return same version as instance property"$$' \
+		'^camelcase valid var \{ category_id = 1 \} = query;$$' \
+		'^camelcase invalid var \{ category_id = 1 \} = query;$$' \
+		'^camelcase invalid var \{ category_id \} = query;$$' \
+		'^camelcase invalid function foo\(\{ no_camelcased = .default value. \}\) \{\};$$' \
+		'^camelcase invalid const no_camelcased = 0; function foo\(\{ camelcased_value = no_camelcased\}\) \{\}$$' \
+		'^camelcase invalid const \{ no_camelcased = false \} = bar;$$' \
+		'^camelcase invalid const \{ no_camelcased = foo_bar \} = bar;$$' \
+		'^id-length invalid var \{ x\} = \{\};$$' \
+		'^id-match valid var \{ category_id = 1 \} = query;$$' \
+		'^id-match invalid var \{ category_id \} = query;$$' \
+		'^id-match invalid var \{ category_id = 1 \} = query;$$' \
+		'^id-match invalid function foo\(\{ no_camelcased \}\) \{\};$$' \
+		'^id-match invalid function foo\(\{ no_camelcased = .default value. \}\) \{\};$$' \
+		'^id-match invalid const no_camelcased = 0; function foo\(\{ camelcased_value = no_camelcased \}\) \{\}$$' \
+		'^id-match invalid const \{ no_camelcased = false \} = bar;$$' \
+		'^require-await valid async function foo\(\) \{ await async \(\) => \{ await doSomething\(\) \} \}$$' \
+		'^require-await invalid async function foo\(\) \{ await async \(\) => \{ doSomething\(\) \} \}$$' \
+		'^NodeEventGenerator parsing an invalid selector throws a useful error$$' \
+		'^IgnoredPaths contains should return false for files outside of the cwd \(with no ignore file provided\)$$' \
+		'^IgnoredPaths getIgnoredFoldersGlobChecker should ignore default folders when there is no eslintignore file$$' \
+		'^LintResultCache "before all" hook in "LintResultCache"$$' \
+		'^globUtils listFilesToProcess\(\) should return an ignored file, if ignore option is turned off$$' \
+		'^npmUtils "before each" hook for "should not find a direct dependency of the project"$$' \
+		'^npmUtils "after each" hook for "should not find a direct dependency of the project"$$' \
+		'^SourceCodeUtil "after each" hook for "should handle single string filename arguments"$$'
+
+# avoid installing stray config files
+override_dh_install:
+	dh_install -X.eslintrc.yml
+
+override_dh_installdocs:
+	dh_installdocs --all -- $(DOCS)
+
+override_dh_installchangelogs:
+	dh_installchangelogs -- $(CHANGELOGS)
+
+# unset bogus executable bits
+execute_after_dh_fixperms:
+	chmod --recursive a-x,a+X -- debian/*/usr/share/nodejs
+	chmod --recursive a+x -- debian/*/usr/share/nodejs/eslint/bin/*
+
+override_dh_gencontrol:
+	dh_gencontrol -- -V"types:Version=$(shell jq --raw-output .version < Xtypes/package.json)~$(DEB_VERSION)" \
+			-V"config:Version=$(shell jq --raw-output .version < packages/eslint-config-eslint/package.json)~$(DEB_VERSION)"
