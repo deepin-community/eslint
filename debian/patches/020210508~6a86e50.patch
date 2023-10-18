@@ -1,0 +1,183 @@
+Description: Chore: remove loose-parser tests
+Origin: upstream, https://github.com/eslint/eslint/commit/6a86e50
+Bug: https://github.com/eslint/eslint/issues/14315
+Bug: https://github.com/eslint/eslint/issues/14569
+Author: Milos Djermanovic <milos.djermanovic@gmail.com>
+Last-Update: 2022-02-26
+---
+This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
+--- a/package.json
++++ b/package.json
+@@ -84,7 +84,6 @@
+   "devDependencies": {
+     "@babel/core": "^7.4.3",
+     "@babel/preset-env": "^7.4.3",
+-    "acorn": "^7.0.0",
+     "babel-loader": "^8.0.5",
+     "chai": "^4.0.1",
+     "cheerio": "^0.22.0",
+--- a/tests/lib/rules/no-redeclare.js
++++ b/tests/lib/rules/no-redeclare.js
+@@ -9,7 +9,6 @@
+ // Requirements
+ //------------------------------------------------------------------------------
+ 
+-const path = require("path");
+ const rule = require("../../../lib/rules/no-redeclare");
+ const { RuleTester } = require("../../../lib/rule-tester");
+ 
+@@ -17,7 +16,6 @@
+ // Tests
+ //------------------------------------------------------------------------------
+ 
+-const looseParserPath = path.resolve(__dirname, "../../tools/loose-parser.js");
+ const ruleTester = new RuleTester();
+ 
+ ruleTester.run("no-redeclare", rule, {
+@@ -177,112 +175,6 @@
+             ]
+         },
+ 
+-        // let/const
+-        {
+-            code: "let a; let a;",
+-            parser: looseParserPath,
+-            parserOptions: { ecmaVersion: 2015 },
+-            errors: [
+-                { message: "'a' is already defined.", type: "Identifier" }
+-            ]
+-        },
+-        {
+-            code: "let a; let a;",
+-            parser: looseParserPath,
+-            parserOptions: { ecmaVersion: 2015, sourceType: "module" },
+-            errors: [
+-                { message: "'a' is already defined.", type: "Identifier" }
+-            ]
+-        },
+-        {
+-            code: "let a; let a;",
+-            parser: looseParserPath,
+-            parserOptions: { ecmaVersion: 2015, ecmaFeatures: { globalReturn: true } },
+-            errors: [
+-                { message: "'a' is already defined.", type: "Identifier" }
+-            ]
+-        },
+-        {
+-            code: "let a; const a = 0;",
+-            parser: looseParserPath,
+-            parserOptions: { ecmaVersion: 2015 },
+-            errors: [
+-                { message: "'a' is already defined.", type: "Identifier" }
+-            ]
+-        },
+-        {
+-            code: "const a = 0; const a = 0;",
+-            parser: looseParserPath,
+-            parserOptions: { ecmaVersion: 2015 },
+-            errors: [
+-                { message: "'a' is already defined.", type: "Identifier" }
+-            ]
+-        },
+-        {
+-            code: "if (test) { let a; let a; }",
+-            parser: looseParserPath,
+-            parserOptions: { ecmaVersion: 2015 },
+-            errors: [
+-                { message: "'a' is already defined.", type: "Identifier" }
+-            ]
+-        },
+-        {
+-            code: "switch (test) { case 0: let a; let a; }",
+-            parser: looseParserPath,
+-            parserOptions: { ecmaVersion: 2015 },
+-            errors: [
+-                { message: "'a' is already defined.", type: "Identifier" }
+-            ]
+-        },
+-        {
+-            code: "for (let a, a;;);",
+-            parser: looseParserPath,
+-            parserOptions: { ecmaVersion: 2015 },
+-            errors: [
+-                { message: "'a' is already defined.", type: "Identifier" }
+-            ]
+-        },
+-        {
+-            code: "for (let [a, a] in xs);",
+-            parser: looseParserPath,
+-            parserOptions: { ecmaVersion: 2015 },
+-            errors: [
+-                { message: "'a' is already defined.", type: "Identifier" }
+-            ]
+-        },
+-        {
+-            code: "for (let [a, a] of xs);",
+-            parser: looseParserPath,
+-            parserOptions: { ecmaVersion: 2015 },
+-            errors: [
+-                { message: "'a' is already defined.", type: "Identifier" }
+-            ]
+-        },
+-        {
+-            code: "function f() { let a; let a; }",
+-            parser: looseParserPath,
+-            parserOptions: { ecmaVersion: 2015 },
+-            errors: [
+-                { message: "'a' is already defined.", type: "Identifier" }
+-            ]
+-        },
+-        {
+-            code: "function f(a) { let a; }",
+-            parser: looseParserPath,
+-            parserOptions: { ecmaVersion: 2015 },
+-            errors: [
+-                { message: "'a' is already defined.", type: "Identifier" }
+-            ]
+-        },
+-        {
+-            code: "function f() { if (test) { let a; let a; } }",
+-            parser: looseParserPath,
+-            parserOptions: { ecmaVersion: 2015 },
+-            errors: [
+-                { message: "'a' is already defined.", type: "Identifier" }
+-            ]
+-        },
+-
+         // Comments and built-ins.
+         {
+             code: "/*globals Array */",
+--- a/tests/tools/loose-parser.js
++++ /dev/null
+@@ -1,31 +0,0 @@
+-/**
+- * @fileoverview Define a custom parser to ignore recoverable syntax errors.
+- * @author Toru Nagashima <https://github.com/mysticatea>
+- *
+- * no-redeclare rule uses this parser to check redeclarations.
+- */
+-"use strict";
+-
+-const acorn = require("acorn");
+-const espree = require("espree/lib/espree");
+-
+-// eslint-disable-next-line valid-jsdoc
+-/**
+- * Define the parser which ignores recoverable errors.
+- * @returns {(parser:acorn.Parser) => acorn.Parser} The function that defines loose parser.
+- */
+-function loose() {
+-    return Parser => class LooseParser extends Parser {
+-        raiseRecoverable() { // eslint-disable-line class-methods-use-this
+-            // ignore
+-        }
+-    };
+-}
+-
+-const LooseEspree = acorn.Parser.extend(espree(), loose());
+-
+-module.exports = {
+-    parse(code, options) {
+-        return new LooseEspree(options, code).parse();
+-    }
+-};

@@ -1,0 +1,18 @@
+Description: Chore: Mark SourceCode getComments() method as deprecated
+Origin: upstream, https://github.com/eslint/eslint/commit/72a4e10
+Bug: https://github.com/eslint/eslint/issues/13293
+Bug: https://github.com/eslint/eslint/issues/13296
+Author: SuperOleg39 <surf4sites@yandex.ru>
+Last-Update: 2022-02-27
+---
+This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
+--- a/lib/source-code/source-code.js
++++ b/lib/source-code/source-code.js
+@@ -306,6 +306,7 @@
+      * @returns {Object} An object containing a leading and trailing array
+      *      of comments indexed by their position.
+      * @public
++     * @deprecated replaced by getCommentsBefore(), getCommentsAfter(), and getCommentsInside().
+      */
+     getComments(node) {
+         if (this._commentCache.has(node)) {

@@ -6,7 +6,6 @@ Restrictions: superficial
 
 Test-Command:
  set -e;
- node tools/update-unicode-utils.js;
  ln --force --symbolic --no-target-directory internal-rules
  tools/eslint-plugin-internal-rules;
  NODE_PATH=tools eslint --format tap --report-unused-disable-directives
@@ -14,7 +13,7 @@ Test-Command:
  lib conf bin tests/bin tests/lib tests/tools
 Depends:
  eslint,
- node-babel-code-frame (>= 7),
+ node-acorn,
  node-chai,
  node-cheerio,
  node-eslint-plugin-eslint-plugin,
@@ -22,10 +21,9 @@ Depends:
  node-eslint-rule-composer,
  node-inquirer,
  node-leche,
- node-mock-fs,
  node-proxyquire,
+ node-recast,
  node-shelljs,
  node-sinon,
  node-temp,
  node-text-table,
- nodejs,

@@ -1,0 +1,18 @@
+Description: Use newer Node.js module eslint-scope
+Forwarded: no
+Author: Jonas Smedegaard <dr@jones.dk>
+Last-Update: 2022-03-27
+---
+This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
+--- a/tests/fixtures/parsers/enhanced-parser3.js
++++ b/tests/fixtures/parsers/enhanced-parser3.js
+@@ -1,8 +1,7 @@
+ "use strict";
+ 
+ const assert = require("assert");
+-const ScopeManager = require("eslint-scope/lib/scope-manager");
+-const Referencer = require("eslint-scope/lib/referencer");
++const { ScopeManager, Referencer } = require("eslint-scope");
+ const vk = require("eslint-visitor-keys");
+ 
+ class EnhancedReferencer extends Referencer {

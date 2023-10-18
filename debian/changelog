@@ -1,3 +1,132 @@
+eslint (6.4.0~dfsg+~6.1.9-7) unstable; urgency=medium
+
+  * update TODOs, thanks to Jérémy Lal (see bug#1004244)
+  * drop patch 2001; build-depend on node-v8-compile-cache
+  * declare compliance with Debian Policy 4.6.1
+
+ -- Jonas Smedegaard <dr@jones.dk>  Fri, 10 Jun 2022 11:18:23 +0200
+
+eslint (6.4.0~dfsg+~6.1.9-6) unstable; urgency=medium
+
+  * update workarounds for failing tests
+
+ -- Jonas Smedegaard <dr@jones.dk>  Fri, 10 Jun 2022 11:07:45 +0200
+
+eslint (6.4.0~dfsg+~6.1.9-5) unstable; urgency=medium
+
+  * relax to suggest (not recommend) node-inquirer,
+    and mention its use in long description
+  * add patch 2011 to use newer Node.js module eslint-scope;
+    closes: bug#1008448, thanks to Lucas Nussbaum
+
+ -- Jonas Smedegaard <dr@jones.dk>  Sun, 27 Mar 2022 03:47:25 +0200
+
+eslint (6.4.0~dfsg+~6.1.9-4) unstable; urgency=medium
+
+  * add patches cherry-picked upstream:
+    + stop use deprecated Node.js module leche
+      and adjust whitespace tolerance;
+      stop build-depend on node-leche
+    + remove loose-parser tests;
+      stop build-depend on node-acorn
+    + use newer Node.js module espree;
+      tighten build-dependency on node-espree
+  * update patch 1001 to use newer API;
+    tighten (build-)dependency on node-regenerate-unicode-properties;
+    closes: bug#1005335, thanks to Yadd
+  * unfuzz patches
+
+ -- Jonas Smedegaard <dr@jones.dk>  Sun, 27 Feb 2022 22:33:14 +0100
+
+eslint (6.4.0~dfsg+~6.1.9-3) unstable; urgency=medium
+
+  * fix install all typescript types;
+    closes: bug#1006053, thanks to Lucas Nussbaum
+  * have eslint break older node-mysticatea-eslint-plugin
+  * generate documentation with cmark-gfm (not pandoc);
+    build-depend on cmark-gfm (not pandoc)
+  * stop build-depend on nodejs:
+    not used explicitly during build
+
+ -- Jonas Smedegaard <dr@jones.dk>  Fri, 25 Feb 2022 23:22:25 +0100
+
+eslint (6.4.0~dfsg+~6.1.9-2) unstable; urgency=medium
+
+  * update TODOs
+
+ -- Jonas Smedegaard <dr@jones.dk>  Tue, 01 Feb 2022 11:04:35 +0100
+
+eslint (6.4.0~dfsg+~6.1.9-1) experimental; urgency=medium
+
+  [ upstream ]
+  * new release(s)
+
+  [ Jonas Smedegaard ]
+  * update watch file: limit tracking to versions before v6.5
+  * drop patch cherry-picked upstream now applied
+  * unfuzz patches
+
+ -- Jonas Smedegaard <dr@jones.dk>  Sun, 30 Jan 2022 22:49:47 +0100
+
+eslint (6.1.0~dfsg+~6.1.9-1) experimental; urgency=medium
+
+  [ upstream ]
+  * new release(s)
+
+  [ Yadd ]
+  * Add ctype=nodejs to component(s)
+  * Update nodejs dependency to nodejs:any
+
+  [ Jonas Smedegaard ]
+  * update watch file: limit tracking to versions 6.1.x
+  * update copyright info:
+    + update paths for files to remove
+      when repackaging upstream source tarball
+    + update coverage
+    + use single Reference field for multiple entries
+  * add patches cherry-picked upstream:
+    + drop support for older Node.js releases;
+      (build-)depend on node-memfs;
+      tighten to (build-)depend versioned on nodejs
+    + improve no-restricted-imports rule;
+      tighten (build-)dependency on node-ignore
+    + support newer NodeJS module yaml
+    + drop codeframe and table formatters;
+      stop suggest node-babel-code-frame node-table;
+      update long description
+  * add patch 2001
+    to avoid use of Node.js module v8-compile-cache
+  * update and unfuzz patches
+  * stop generate unicode-utils code no longer used
+  * build-depend on node-acorn node-recast
+    (not node-mock-fs);
+    depend on node-glob-parent node-is-glob
+    (not node-glob node-path-is-inside)
+  * have autopkgtest depend on node-acorn node-recast
+    (not node-babel-code-frame node-mock-fs)
+  * update workarounds for failing tests
+  * update lintian overrides
+
+ -- Jonas Smedegaard <dr@jones.dk>  Sun, 30 Jan 2022 21:29:25 +0100
+
+eslint (5.16.0~dfsg+~4.16.8-9) unstable; urgency=medium
+
+  * update copyright info: update coverage
+  * tighten lintian overrides
+  * revive patch 2006,
+    and stop (build-)depend on node-natural-compare;
+    update copyright file
+
+ -- Jonas Smedegaard <dr@jones.dk>  Tue, 07 Dec 2021 22:32:13 +0100
+
+eslint (5.16.0~dfsg+~4.16.8-8) unstable; urgency=medium
+
+  * Team upload
+  * Add patch for node-js-yaml ≥ 4
+  * Set upstream metadata fields: Bug-Database, Bug-Submit.
+
+ -- Yadd <yadd@debian.org>  Thu, 25 Nov 2021 06:28:22 +0100
+
 eslint (5.16.0~dfsg+~4.16.8-7) unstable; urgency=medium
 
   * drop patch 2006, and (build-)depend on node-natural-compare;

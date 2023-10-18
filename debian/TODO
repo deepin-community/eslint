@@ -1,12 +1,21 @@
-  * upgrade upstream source when needed Node.js modules are in Debian:
-    @eslint/eslintrc
-    eslint-plugin-jsdoc
-    fs-teardown
-    memfs
-    v8-compile-cache
-  * depend on Node.js modules when available in Debian:
-    table
-  * check more tests when needed Node.js modules are in Debian:
-    eslint-rule-composer
-    eslump
-    table
+  * upgrade to v6.5.0
+    when needed Node.js module is in Debian:
+    + eslint-plugin-jsdoc
+  * upgrade to v7.10.0
+    when needed Node.js module is in Debian:
+    + @eslint/eslintrc
+    (or maybe embedding if reasonably small)
+  * upgrade to v7.29.0
+    when needed Node.js module is in Debian:
+    + fs-teardown
+  * upgrade to v7.32.0
+    when needed Node.js module is in Debian:
+    + @humanwhocodes/config-array
+    (or maybe embedding if reasonably small)
+  * upgrade to v8.8.0
+    when needed Node.js module is in Debian:
+    + eslint-plugin-eslint-comments
+  * check more tests
+    when needed Node.js modules are in Debian:
+    + eslint-rule-composer
+    + eslump

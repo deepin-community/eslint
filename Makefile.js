@@ -26,7 +26,8 @@ const lodash = require("lodash"),
     ejs = require("ejs"),
     loadPerf = require("load-perf"),
     yaml = require("js-yaml"),
-    CLIEngine = require("./lib/cli-engine");
+    { CLIEngine } = require("./lib/cli-engine"),
+    builtinRules = require("./lib/rules/index");
 
 const { cat, cd, cp, echo, exec, exit, find, ls, mkdir, pwd, rm, test } = require("shelljs");
 
@@ -55,8 +56,8 @@ const NODE = "node ", // intentional extra space
     TEMP_DIR = "./tmp/",
     DEBUG_DIR = "./debug/",
     BUILD_DIR = "build",
-    DOCS_DIR = "../eslint.github.io/docs",
-    SITE_DIR = "../eslint.github.io/",
+    DOCS_DIR = "../website/docs",
+    SITE_DIR = "../website/",
     PERF_TMP_DIR = path.join(TEMP_DIR, "eslint", "performance"),
 
     // Utilities - intentional extra space at the end of each string
@@ -64,6 +65,7 @@ const NODE = "node ", // intentional extra space
     ESLINT = `${NODE} bin/eslint.js --report-unused-disable-directives `,
 
     // Files
+    RULE_FILES = glob.sync("lib/rules/*.js").filter(filePath => path.basename(filePath) !== "index.js"),
     JSON_FILES = find("conf/").filter(fileType("json")),
     MARKDOWN_FILES_ARRAY = find("docs/").concat(ls(".")).filter(fileType("md")),
     TEST_FILES = "\"tests/{bin,lib,tools}/**/*.js\"",
@@ -119,10 +121,10 @@ function execSilent(cmd) {
  * @private
  */
 function generateBlogPost(releaseInfo, prereleaseMajorVersion) {
-    const ruleList = ls("lib/rules")
+    const ruleList = RULE_FILES
 
         // Strip the .js extension
-        .map(ruleFileName => ruleFileName.replace(/\.js$/u, ""))
+        .map(ruleFileName => path.basename(ruleFileName, ".js"))
 
         /*
          * Sort by length descending. This ensures that rule names which are substrings of other rule names are not
@@ -137,7 +139,7 @@ function generateBlogPost(releaseInfo, prereleaseMajorVersion) {
         now = new Date(),
         month = now.getMonth() + 1,
         day = now.getDate(),
-        filename = `../eslint.github.io/_posts/${now.getFullYear()}-${
+        filename = `../website/_posts/${now.getFullYear()}-${
             month < 10 ? `0${month}` : month}-${
             day < 10 ? `0${day}` : day}-eslint-v${
             releaseInfo.version}-released.md`;
@@ -154,8 +156,8 @@ function generateBlogPost(releaseInfo, prereleaseMajorVersion) {
  */
 function generateFormatterExamples(formatterInfo, prereleaseVersion) {
     const output = ejs.render(cat("./templates/formatter-examples.md.ejs"), formatterInfo);
-    let filename = "../eslint.github.io/docs/user-guide/formatters/index.md",
-        htmlFilename = "../eslint.github.io/docs/user-guide/formatters/html-formatter-example.html";
+    let filename = "../website/docs/user-guide/formatters/index.md",
+        htmlFilename = "../website/docs/user-guide/formatters/html-formatter-example.html";
 
     if (prereleaseVersion) {
         filename = filename.replace("/docs", `/docs/${prereleaseVersion}`);
@@ -171,21 +173,20 @@ function generateFormatterExamples(formatterInfo, prereleaseVersion) {
 
 /**
  * Generate a doc page that lists all of the rules and links to them
- * @param {string} basedir The directory in which to look for code.
  * @returns {void}
  */
-function generateRuleIndexPage(basedir) {
-    const outputFile = "../eslint.github.io/_data/rules.yml",
+function generateRuleIndexPage() {
+    const outputFile = "../website/_data/rules.yml",
         categoryList = "conf/category-list.json",
         categoriesData = JSON.parse(cat(path.resolve(categoryList)));
 
-    find(path.join(basedir, "/lib/rules/")).filter(fileType("js"))
+    RULE_FILES
         .map(filename => [filename, path.basename(filename, ".js")])
         .sort((a, b) => a[1].localeCompare(b[1]))
         .forEach(pair => {
             const filename = pair[0];
             const basename = pair[1];
-            const rule = require(filename);
+            const rule = require(path.resolve(filename));
 
             if (rule.meta.deprecated) {
                 categoriesData.deprecated.rules.push({
@@ -215,7 +216,7 @@ function generateRuleIndexPage(basedir) {
 }
 
 /**
- * Creates a git commit and tag in an adjacent `eslint.github.io` repository, without pushing it to
+ * Creates a git commit and tag in an adjacent `website` repository, without pushing it to
  * the remote. This assumes that the repository has already been modified somehow (e.g. by adding a blogpost).
  * @param {string} [tag] The string to tag the commit with
  * @returns {void}
@@ -236,7 +237,7 @@ function commitSiteToGit(tag) {
 }
 
 /**
- * Publishes the changes in an adjacent `eslint.github.io` repository to the remote. The
+ * Publishes the changes in an adjacent `website` repository to the remote. The
  * site should already have local commits (e.g. from running `commitSiteToGit`).
  * @returns {void}
  */
@@ -250,7 +251,7 @@ function publishSite() {
 
 /**
  * Updates the changelog, bumps the version number in package.json, creates a local git commit and tag,
- * and generates the site in an adjacent `eslint.github.io` folder.
+ * and generates the site in an adjacent `website` folder.
  * @returns {void}
  */
 function generateRelease() {
@@ -265,7 +266,7 @@ function generateRelease() {
 
 /**
  * Updates the changelog, bumps the version number in package.json, creates a local git commit and tag,
- * and generates the site in an adjacent `eslint.github.io` folder.
+ * and generates the site in an adjacent `website` folder.
  * @param {string} prereleaseId The prerelease identifier (alpha, beta, etc.)
  * @returns {void}
  */
@@ -302,7 +303,7 @@ function generatePrerelease(prereleaseId) {
 }
 
 /**
- * Publishes a generated release to npm and GitHub, and pushes changes to the adjacent `eslint.github.io` repo
+ * Publishes a generated release to npm and GitHub, and pushes changes to the adjacent `website` repo
  * to remote repo.
  * @returns {void}
  */
@@ -385,29 +386,7 @@ function getFirstVersionOfDeletion(filePath) {
  * @private
  */
 function lintMarkdown(files) {
-    const config = {
-            default: true,
-
-            // Exclusions for deliberate/widespread violations
-            MD001: false, // Header levels should only increment by one level at a time
-            MD002: false, // First header should be a h1 header
-            MD007: { // Unordered list indentation
-                indent: 4
-            },
-            MD012: false, // Multiple consecutive blank lines
-            MD013: false, // Line length
-            MD014: false, // Dollar signs used before commands without showing output
-            MD019: false, // Multiple spaces after hash on atx style header
-            MD021: false, // Multiple spaces inside hashes on closed atx style header
-            MD024: false, // Multiple headers with the same content
-            MD026: false, // Trailing punctuation in header
-            MD029: false, // Ordered list item prefix
-            MD030: false, // Spaces after list markers
-            MD033: false, // Allow inline HTML
-            MD034: false, // Bare URL used
-            MD040: false, // Fenced code blocks should have a language specified
-            MD041: false // First line in file should be a top level header
-        },
+    const config = yaml.safeLoad(fs.readFileSync(path.join(__dirname, "./.markdownlint.yml"), "utf8")),
         result = markdownlint.sync({
             files,
             config,
@@ -429,7 +408,7 @@ function lintMarkdown(files) {
 function getFormatterResults() {
     const stripAnsi = require("strip-ansi");
 
-    const formatterFiles = fs.readdirSync("./lib/formatters/"),
+    const formatterFiles = fs.readdirSync("./lib/cli-engine/formatters/"),
         rules = {
             "no-else-return": "warn",
             indent: ["warn", 4],
@@ -518,7 +497,7 @@ target.lint = function() {
     }
 };
 
-target.fuzz = function({ amount = process.env.CI ? 1000 : 300, fuzzBrokenAutofixes = true } = {}) {
+target.fuzz = function({ amount = 1000, fuzzBrokenAutofixes = false } = {}) {
     const fuzzerRunner = require("./tools/fuzzer-runner");
     const fuzzResults = fuzzerRunner.run({ amount, fuzzBrokenAutofixes });
 
@@ -557,9 +536,7 @@ target.fuzz = function({ amount = process.env.CI ? 1000 : 300, fuzzBrokenAutofix
     }
 };
 
-target.test = function() {
-    target.lint();
-    target.checkRuleFiles();
+target.mocha = () => {
     let errors = 0,
         lastReturn;
 
@@ -575,6 +552,14 @@ target.test = function() {
         errors++;
     }
 
+    if (errors) {
+        exit(1);
+    }
+};
+
+target.karma = () => {
+    echo("Running unit tests on browsers");
+
     target.webpack();
 
     const browserFileLintOutput = new CLIEngine({
@@ -587,20 +572,22 @@ target.test = function() {
     if (browserFileLintOutput.errorCount > 0) {
         echo(`error: Failed to lint ${BUILD_DIR}/eslint.js as ES5 code`);
         echo(CLIEngine.getFormatter("stylish")(browserFileLintOutput.results));
-        errors++;
-    }
-
-    lastReturn = exec(`${getBinFile("karma")} start karma.conf.js`);
-    if (lastReturn.code !== 0) {
-        errors++;
-    }
-
-    if (errors) {
         exit(1);
     }
 
-    target.fuzz({ amount: 150, fuzzBrokenAutofixes: false });
+    const lastReturn = exec(`${getBinFile("karma")} start karma.conf.js`);
 
+    if (lastReturn.code !== 0) {
+        exit(1);
+    }
+};
+
+target.test = function() {
+    target.lint();
+    target.checkRuleFiles();
+    target.mocha();
+    target.karma();
+    target.fuzz({ amount: 150, fuzzBrokenAutofixes: false });
     target.checkLicenses();
 };
 
@@ -782,7 +769,7 @@ target.gensite = function(prereleaseVersion) {
 
     // 11. Generate rule listing page
     echo("> Generating the rule listing (Step 11)");
-    generateRuleIndexPage(process.cwd());
+    generateRuleIndexPage();
 
     // 12. Delete temporary directory
     echo("> Removing the temporary directory (Step 12)");
@@ -792,8 +779,8 @@ target.gensite = function(prereleaseVersion) {
     if (!prereleaseVersion) {
         echo("> Updating the demos (Step 13)");
         target.webpack("production");
-        cp("-f", "build/eslint.js", `${SITE_DIR}js/app/eslint.js`);
-        cp("-f", "build/espree.js", `${SITE_DIR}js/app/espree.js`);
+        cp("-f", "build/eslint.js", `${SITE_DIR}src/js/eslint.js`);
+        cp("-f", "build/espree.js", `${SITE_DIR}src/js/espree.js`);
     } else {
         echo("> Skipped updating the demos (Step 13)");
     }
@@ -814,10 +801,9 @@ target.checkRuleFiles = function() {
     echo("Validating rules");
 
     const ruleTypes = require("./tools/rule-types.json");
-    const ruleFiles = find("lib/rules/").filter(fileType("js"));
     let errors = 0;
 
-    ruleFiles.forEach(filename => {
+    RULE_FILES.forEach(filename => {
         const basename = path.basename(filename, ".js");
         const docFilename = `docs/rules/${basename}.md`;
 
@@ -869,14 +855,29 @@ target.checkRuleFiles = function() {
         }
 
         // check parity between rules index file and rules directory
-        const builtInRulesIndexPath = "./lib/built-in-rules-index";
-        const ruleIdsInIndex = require(builtInRulesIndexPath);
-        const ruleEntryFromIndexIsMissing = !(basename in ruleIdsInIndex);
+        const ruleIdsInIndex = require("./lib/rules/index");
+        const ruleDef = ruleIdsInIndex.get(basename);
 
-        if (ruleEntryFromIndexIsMissing) {
-            console.error(`Missing rule from index (${builtInRulesIndexPath}.js): ${basename}. If you just added a ` +
-                "new rule then add an entry for it in this file.");
+        if (!ruleDef) {
+            console.error(`Missing rule from index (./lib/rules/index.js): ${basename}. If you just added a new rule then add an entry for it in this file.`);
             errors++;
+        }
+
+        // check eslint:recommended
+        const recommended = require("./conf/eslint-recommended");
+
+        if (ruleDef) {
+            if (ruleDef.meta.docs.recommended) {
+                if (recommended.rules[basename] !== "error") {
+                    console.error(`Missing rule from eslint:recommended (./conf/eslint-recommended.js): ${basename}. If you just made a rule recommended then add an entry for it in this file.`);
+                    errors++;
+                }
+            } else {
+                if (basename in recommended.rules) {
+                    console.error(`Extra rule in eslint:recommended (./conf/eslint-recommended.js): ${basename}. If you just added a rule then don't add an entry for it in this file.`);
+                    errors++;
+                }
+            }
         }
 
         // check for tests
@@ -967,7 +968,9 @@ function createConfigForPerformanceTest() {
         "rules:"
     ];
 
-    content.push(...ls("lib/rules").map(fileName => `    ${path.basename(fileName, ".js")}: 1`));
+    for (const [ruleId] of builtinRules) {
+        content.push(`    ${ruleId}: 1`);
+    }
 
     content.join("\n").to(PERF_ESLINTRC);
 }
@@ -1093,7 +1096,7 @@ target.perf = function() {
                 // Count test target files.
                 const count = glob.sync(
                     process.platform === "win32"
-                        ? PERF_MULTIFILES_TARGETS.slice(2).replace("\\", "/")
+                        ? PERF_MULTIFILES_TARGETS.slice(2).replace(/\\/gu, "/")
                         : PERF_MULTIFILES_TARGETS
                 ).length;
 

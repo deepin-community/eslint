@@ -1,0 +1,97 @@
+Description: Breaking: disallow SourceCode#getComments() in RuleTester
+  * Breaking: disallow SourceCode#getComments() in RuleTester (refs #14744)
+  * Update lib/rule-tester/rule-tester.js
+Origin: upstream, https://github.com/eslint/eslint/commit/86d31a4
+Bug: https://github.com/eslint/eslint/issues/14744
+Bug: https://github.com/eslint/eslint/issues/14769
+Author: Milos Djermanovic <milos.djermanovic@gmail.com>
+Author: Nicholas C. Zakas <nicholas@nczconsulting.com>
+Last-Update: 2022-02-27
+---
+This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
+--- a/lib/rule-tester/rule-tester.js
++++ b/lib/rule-tester/rule-tester.js
+@@ -50,6 +50,8 @@
+ 
+ const ajv = require("../shared/ajv")({ strictDefaults: true });
+ 
++const { SourceCode } = require("../source-code");
++
+ //------------------------------------------------------------------------------
+ // Private Members
+ //------------------------------------------------------------------------------
+@@ -135,6 +137,17 @@
+     );
+ }
+ 
++/**
++ * Function to replace `SourceCode.prototype.getComments`.
++ * @returns {void}
++ * @throws {Error} Deprecation message.
++ */
++function getCommentsDeprecation() {
++    throw new Error(
++        "`SourceCode#getComments()` is deprecated and will be removed in a future major version. Use `getCommentsBefore()`, `getCommentsAfter()`, and `getCommentsInside()` instead."
++    );
++}
++
+ //------------------------------------------------------------------------------
+ // Public Interface
+ //------------------------------------------------------------------------------
+@@ -409,7 +422,15 @@
+             validate(config, "rule-tester", id => (id === ruleName ? rule : null));
+ 
+             // Verify the code.
+-            const messages = linter.verify(code, config, filename);
++            const { getComments } = SourceCode.prototype;
++            let messages;
++
++            try {
++                SourceCode.prototype.getComments = getCommentsDeprecation;
++                messages = linter.verify(code, config, filename);
++            } finally {
++                SourceCode.prototype.getComments = getComments;
++            }
+ 
+             // Ignore syntax errors for backward compatibility if `errors` is a number.
+             if (typeof item.errors !== "number") {
+--- a/tests/lib/rule-tester/rule-tester.js
++++ b/tests/lib/rule-tester/rule-tester.js
+@@ -1072,4 +1072,37 @@
+             );
+         }, /A fatal parsing error occurred in autofix/u);
+     });
++
++    describe("SourceCode#getComments()", () => {
++        const useGetCommentsRule = {
++            create: context => ({
++                Program(node) {
++                    const sourceCode = context.getSourceCode();
++
++                    sourceCode.getComments(node);
++                }
++            })
++        };
++
++        it("should throw if called from a valid test case", () => {
++            assert.throws(() => {
++                ruleTester.run("use-get-comments", useGetCommentsRule, {
++                    valid: [""],
++                    invalid: []
++                });
++            }, /`SourceCode#getComments\(\)` is deprecated/u);
++        });
++
++        it("should throw if called from an invalid test case", () => {
++            assert.throws(() => {
++                ruleTester.run("use-get-comments", useGetCommentsRule, {
++                    valid: [],
++                    invalid: [{
++                        code: "",
++                        errors: [{}]
++                    }]
++                });
++            }, /`SourceCode#getComments\(\)` is deprecated/u);
++        });
++    });
+ });

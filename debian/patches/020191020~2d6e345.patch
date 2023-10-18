@@ -1,0 +1,28 @@
+Description: Update: make isSpaceBetweenTokens() ignore newline in comments
+Origin: upstream, https://github.com/eslint/eslint/commit/2d6e345
+Bug: https://github.com/eslint/eslint/issues/12407
+Author: YeonJuan <yeonjuan93@naver.com>
+Last-Update: 2022-02-26
+---
+This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
+--- a/lib/source-code/source-code.js
++++ b/lib/source-code/source-code.js
+@@ -424,7 +424,7 @@
+     isSpaceBetweenTokens(first, second) {
+         const text = this.text.slice(first.range[1], second.range[0]);
+ 
+-        return /\s/u.test(text.replace(/\/\*.*?\*\//gu, ""));
++        return /\s/u.test(text.replace(/\/\*.*?\*\//gus, ""));
+     }
+ 
+     /**
+--- a/tests/lib/source-code/source-code.js
++++ b/tests/lib/source-code/source-code.js
+@@ -1796,6 +1796,7 @@
+             ["let  foo = bar;", true],
+             ["let /**/ foo = bar;", true],
+             ["let/**/foo = bar;", false],
++            ["let/*\n*/foo = bar", false],
+             ["a+b", false],
+             ["a/**/+b", false],
+             ["a/* */+b", false],

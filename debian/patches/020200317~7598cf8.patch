@@ -1,0 +1,54 @@
+Description: Fix: Newline before eof when creating config via --init
+  * Fix: Newline before eof when creating config via --init
+  * Add test
+  * Make a dedicated test (with a bit of duplication)
+Origin: upstream, https://github.com/eslint/eslint/commit/7598cf8
+Bug: https://github.com/eslint/eslint/issues/12952
+Author: Andreas Lind <andreaslindpetersen@gmail.com>
+Last-Update: 2022-02-26
+---
+This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
+--- a/lib/init/config-file.js
++++ b/lib/init/config-file.js
+@@ -46,7 +46,7 @@
+ function writeJSONConfigFile(config, filePath) {
+     debug(`Writing JSON config file: ${filePath}`);
+ 
+-    const content = stringify(config, { cmp: sortByKey, space: 4 });
++    const content = `${stringify(config, { cmp: sortByKey, space: 4 })}\n`;
+ 
+     fs.writeFileSync(filePath, content, "utf8");
+ }
+@@ -81,7 +81,7 @@
+     debug(`Writing JS config file: ${filePath}`);
+ 
+     let contentToWrite;
+-    const stringifiedContent = `module.exports = ${stringify(config, { cmp: sortByKey, space: 4 })};`;
++    const stringifiedContent = `module.exports = ${stringify(config, { cmp: sortByKey, space: 4 })};\n`;
+ 
+     try {
+         const { CLIEngine } = require("../cli-engine");
+--- a/tests/lib/init/config-file.js
++++ b/tests/lib/init/config-file.js
+@@ -82,6 +82,21 @@
+                 StubbedConfigFile.write(config, filename);
+             });
+ 
++            it("should include a newline character at EOF", () => {
++                const fakeFS = leche.fake(fs);
++
++                sinon.mock(fakeFS).expects("writeFileSync").withExactArgs(
++                    filename,
++                    sinon.match(value => value.endsWith("\n")),
++                    "utf8"
++                );
++
++                const StubbedConfigFile = proxyquire("../../../lib/init/config-file", {
++                    fs: fakeFS
++                });
++
++                StubbedConfigFile.write(config, filename);
++            });
+         });
+ 
+         it("should make sure js config files match linting rules", () => {

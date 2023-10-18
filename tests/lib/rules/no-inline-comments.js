@@ -9,7 +9,7 @@
 //------------------------------------------------------------------------------
 
 const rule = require("../../../lib/rules/no-inline-comments"),
-    RuleTester = require("../../../lib/testers/rule-tester");
+    { RuleTester } = require("../../../lib/rule-tester");
 
 //------------------------------------------------------------------------------
 // Tests
@@ -17,11 +17,11 @@ const rule = require("../../../lib/rules/no-inline-comments"),
 
 const ruleTester = new RuleTester(),
     lineError = {
-        messsage: "Unexpected comment inline with code.",
+        message: "Unexpected comment inline with code.",
         type: "Line"
     },
     blockError = {
-        messsage: "Unexpected comment inline with code.",
+        message: "Unexpected comment inline with code.",
         type: "Block"
     };
 
@@ -31,8 +31,8 @@ ruleTester.run("no-inline-comments", rule, {
         "// A valid comment before code\nvar a = 1;",
         "var a = 2;\n// A valid comment after code",
         "// A solitary comment",
-        "var a = 1; // eslint-disable-line some-rule",
-        "var a = 1; /* eslint-disable-line some-rule */"
+        "var a = 1; // eslint-disable-line no-debugger",
+        "var a = 1; /* eslint-disable-line no-debugger */"
     ],
 
     invalid: [
