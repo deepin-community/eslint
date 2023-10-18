@@ -7,8 +7,8 @@ Source: https://github.com/eslint/eslint
  Repackaged, excluding non-free code, generated code,
  and convenience code copies.
 Files-Excluded:
- lib/util/patterns/letters.js
- lib/util/unicode/is-combining-character.js
+ lib/rules/utils/patterns/letters.js
+ lib/rules/utils/unicode/is-combining-character.js
  tests/performance/jshint.js
  tests/bench/large.js
  tests/bench/medium.js
@@ -18,6 +18,9 @@ Files: *
 Copyright:
   JS Foundation and other contributors <https://js.foundation/>
 License: Expat
+Reference:
+ package.json
+ LICENSE
 
 Files:
  docs/maintainer-guide/governance.md
@@ -34,30 +37,39 @@ Comment:
  and assumed to be same as generally for the project.
 
 Files:
- lib/config/config-ops.js
+ Xtypes/*
 Copyright:
-        JS Foundation and other contributors <https://js.foundation/>
-  2012  Nicholas Fisher
+  Microsoft Corporation
 License: Expat
+Reference:
+ Xtypes/package.json
+ Xtypes/LICENSE
 
 Files:
  debian/*
 Copyright:
-  2019-2021  Jonas Smedegaard <dr@jones.dk>
-  2019-2021  Purism SPC
+  2019-2022  Jonas Smedegaard <dr@jones.dk>
+  2019-2022  Purism SPC
 License-Grant:
- This program is free software;
+ This packaging is free software;
  you can redistribute it and/or modify it
  under the terms of the GNU General Public License
  as published by the Free Software Foundation;
  either version 3, or (at your option) any later version.
 License: GPL-3+
-Reference: debian/copyright
+Reference:
+ debian/copyright
 
 Files:
  debian/patches/0*.patches
 Copyright:
   JS Foundation and other contributors <https://js.foundation/>
+License: Expat
+
+Files:
+ debian/patches/2006_avoid_natural-compare.patch
+Copyright:
+  Lauri Rooden <https://github.com/litejs/natural-compare-lite>
 License: Expat
 
 License: CC-BY-SA-2.0~UK

@@ -11,13 +11,13 @@
 
 const resolvePath = require("path").resolve,
     rule = require("../../../lib/rules/object-curly-newline"),
-    RuleTester = require("../../../lib/testers/rule-tester");
+    { RuleTester } = require("../../../lib/rule-tester");
 
 //------------------------------------------------------------------------------
 // Tests
 //------------------------------------------------------------------------------
 
-const ruleTester = new RuleTester({ parserOptions: { sourceType: "module" } });
+const ruleTester = new RuleTester({ parserOptions: { ecmaVersion: 6, sourceType: "module" } });
 
 ruleTester.run("object-curly-newline", rule, {
     valid: [

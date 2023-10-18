@@ -1,0 +1,19 @@
+Description: Chore: add missing `ecmaVersion` 2020/11 type value
+ This is a minor fix for shared type definition.
+Origin: upstream, https://github.com/eslint/eslint/commit/691d19a
+Bug: https://github.com/eslint/eslint/issues/12833
+Author: Piotr Błażejewicz (Peter Blazejewicz) <peterblazejewicz@users.noreply.github.com>
+Last-Update: 2022-02-26
+---
+This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
+--- a/lib/shared/types.js
++++ b/lib/shared/types.js
+@@ -21,7 +21,7 @@
+ /**
+  * @typedef {Object} ParserOptions
+  * @property {EcmaFeatures} [ecmaFeatures] The optional features.
+- * @property {3|5|6|7|8|9|10|2015|2016|2017|2018|2019} [ecmaVersion] The ECMAScript version (or revision number).
++ * @property {3|5|6|7|8|9|10|11|2015|2016|2017|2018|2019|2020} [ecmaVersion] The ECMAScript version (or revision number).
+  * @property {"script"|"module"} [sourceType] The source code type.
+  */
+ 

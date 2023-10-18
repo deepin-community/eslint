@@ -11,7 +11,18 @@ Files: CODE_OF_CONDUCT.md
  SUPPORT.md
  Xtypes/README.md
  Xtypes/index.d.ts
- appveyor.yml
+ Xtypes/ts3.1/helpers.d.ts
+ Xtypes/ts3.1/index.d.ts
+ Xtypes/ts3.1/rules/best-practices.d.ts
+ Xtypes/ts3.1/rules/deprecated.d.ts
+ Xtypes/ts3.1/rules/ecmascript-6.d.ts
+ Xtypes/ts3.1/rules/index.d.ts
+ Xtypes/ts3.1/rules/node-commonjs.d.ts
+ Xtypes/ts3.1/rules/possible-errors.d.ts
+ Xtypes/ts3.1/rules/strict-mode.d.ts
+ Xtypes/ts3.1/rules/stylistic-issues.d.ts
+ Xtypes/ts3.1/rules/variables.d.ts
+ azure-pipelines.yml
  bin/eslint.js
  conf/category-list.json
  conf/config-schema.js
@@ -28,21 +39,49 @@ Files: CODE_OF_CONDUCT.md
  debian/install
  debian/links
  debian/manpages
- debian/patches/020190820~8c021b5.patch
+ debian/patches/020191002~8108f49.patch
+ debian/patches/020191020~2d6e345.patch
+ debian/patches/020191107~9e29e18.patch
+ debian/patches/020191109~90305e0.patch
+ debian/patches/020191201~bc435a9.patch
+ debian/patches/020191220~a258039.patch
+ debian/patches/020200115~68becbd.patch
+ debian/patches/020200117~9a93d9e.patch
+ debian/patches/020200130~691d19a.patch
+ debian/patches/020200317~7598cf8.patch
+ debian/patches/020200422~e13256e.patch
+ debian/patches/020200519~72a4e10.patch
+ debian/patches/020200802~9124a15.patch
+ debian/patches/020200824~091e52a.patch
+ debian/patches/020210508~6a86e50.patch
+ debian/patches/020210521~52655dd.patch
+ debian/patches/020210702~5f74642.patch
+ debian/patches/020210805~86d31a4.patch
+ debian/patches/020210806~86bb63b.patch
+ debian/patches/020210809~88db3f5.patch
+ debian/patches/020210820~8344675.patch
+ debian/patches/020211105~cf5b6be.patch
+ debian/patches/020220115~19ad061.patch
  debian/patches/1001_use_regenerate-unicode-properties.patch
  debian/patches/1002_use_newer_cheerio.patch
  debian/patches/2005_avoid_cross-spawn.patch
+ debian/patches/2006_avoid_natural-compare.patch
  debian/patches/2008_avoid_json-stable-stringify-without-jsonify.patch
  debian/patches/2010_privacy.patch
+ debian/patches/2011_use_newer_eslint-scope.patch
  debian/patches/series
  debian/rules
+ debian/salsa-ci.yml
  debian/source/format
+ debian/source/lintian-overrides
  debian/tests/control
+ debian/upstream/metadata
  debian/watch
  docs/README.md
  docs/about/index.md
  docs/developer-guide/README.md
  docs/developer-guide/architecture.md
+ docs/developer-guide/architecture/dependency.svg
  docs/developer-guide/code-conventions.md
  docs/developer-guide/code-path-analysis.md
  docs/developer-guide/code-path-analysis/README.md
@@ -121,6 +160,7 @@ Files: CODE_OF_CONDUCT.md
  docs/rules/constructor-super.md
  docs/rules/curly.md
  docs/rules/default-case.md
+ docs/rules/default-param-last.md
  docs/rules/dot-location.md
  docs/rules/dot-notation.md
  docs/rules/eol-last.md
@@ -130,6 +170,7 @@ Files: CODE_OF_CONDUCT.md
  docs/rules/func-name-matching.md
  docs/rules/func-names.md
  docs/rules/func-style.md
+ docs/rules/function-call-argument-newline.md
  docs/rules/function-paren-newline.md
  docs/rules/generator-star-spacing.md
  docs/rules/generator-star.md
@@ -221,6 +262,7 @@ Files: CODE_OF_CONDUCT.md
  docs/rules/no-implicit-coercion.md
  docs/rules/no-implicit-globals.md
  docs/rules/no-implied-eval.md
+ docs/rules/no-import-assign.md
  docs/rules/no-inline-comments.md
  docs/rules/no-inner-declarations.md
  docs/rules/no-invalid-regexp.md
@@ -333,6 +375,7 @@ Files: CODE_OF_CONDUCT.md
  docs/rules/prefer-object-spread.md
  docs/rules/prefer-promise-reject-errors.md
  docs/rules/prefer-reflect.md
+ docs/rules/prefer-regex-literals.md
  docs/rules/prefer-rest-params.md
  docs/rules/prefer-spread.md
  docs/rules/prefer-template.md
@@ -390,48 +433,70 @@ Files: CODE_OF_CONDUCT.md
  docs/user-guide/migrating-to-3.0.0.md
  docs/user-guide/migrating-to-4.0.0.md
  docs/user-guide/migrating-to-5.0.0.md
+ docs/user-guide/migrating-to-6.0.0.md
  docs/user-guide/rule-deprecation.md
  karma.conf.js
  lib/api.js
- lib/built-in-rules-index.js
- lib/cli-engine.js
+ lib/cli-engine/cascading-config-array-factory.js
+ lib/cli-engine/cli-engine.js
+ lib/cli-engine/config-array-factory.js
+ lib/cli-engine/config-array/config-array.js
+ lib/cli-engine/config-array/config-dependency.js
+ lib/cli-engine/config-array/extracted-config.js
+ lib/cli-engine/config-array/index.js
+ lib/cli-engine/config-array/override-tester.js
+ lib/cli-engine/file-enumerator.js
+ lib/cli-engine/formatters/checkstyle.js
+ lib/cli-engine/formatters/codeframe.js
+ lib/cli-engine/formatters/compact.js
+ lib/cli-engine/formatters/html-template-message.html
+ lib/cli-engine/formatters/html-template-page.html
+ lib/cli-engine/formatters/html-template-result.html
+ lib/cli-engine/formatters/html.js
+ lib/cli-engine/formatters/jslint-xml.js
+ lib/cli-engine/formatters/json-with-metadata.js
+ lib/cli-engine/formatters/json.js
+ lib/cli-engine/formatters/junit.js
+ lib/cli-engine/formatters/stylish.js
+ lib/cli-engine/formatters/table.js
+ lib/cli-engine/formatters/tap.js
+ lib/cli-engine/formatters/unix.js
+ lib/cli-engine/formatters/visualstudio.js
+ lib/cli-engine/hash.js
+ lib/cli-engine/ignored-paths.js
+ lib/cli-engine/index.js
+ lib/cli-engine/lint-result-cache.js
+ lib/cli-engine/load-rules.js
+ lib/cli-engine/xml-escape.js
  lib/cli.js
- lib/code-path-analysis/code-path-analyzer.js
- lib/code-path-analysis/code-path-segment.js
- lib/code-path-analysis/code-path-state.js
- lib/code-path-analysis/code-path.js
- lib/code-path-analysis/debug-helpers.js
- lib/code-path-analysis/fork-context.js
- lib/code-path-analysis/id-generator.js
- lib/config.js
- lib/config/autoconfig.js
- lib/config/config-cache.js
- lib/config/config-file.js
- lib/config/config-initializer.js
- lib/config/config-rule.js
- lib/config/config-validator.js
- lib/config/environments.js
- lib/config/plugins.js
- lib/formatters/checkstyle.js
- lib/formatters/codeframe.js
- lib/formatters/compact.js
- lib/formatters/html-template-message.html
- lib/formatters/html-template-page.html
- lib/formatters/html-template-result.html
- lib/formatters/html.js
- lib/formatters/jslint-xml.js
- lib/formatters/json-with-metadata.js
- lib/formatters/json.js
- lib/formatters/junit.js
- lib/formatters/stylish.js
- lib/formatters/table.js
- lib/formatters/tap.js
- lib/formatters/unix.js
- lib/formatters/visualstudio.js
- lib/linter.js
- lib/load-rules.js
+ lib/init/autoconfig.js
+ lib/init/config-file.js
+ lib/init/config-initializer.js
+ lib/init/config-rule.js
+ lib/init/npm-utils.js
+ lib/init/source-code-utils.js
+ lib/linter/apply-disable-directives.js
+ lib/linter/code-path-analysis/code-path-analyzer.js
+ lib/linter/code-path-analysis/code-path-segment.js
+ lib/linter/code-path-analysis/code-path-state.js
+ lib/linter/code-path-analysis/code-path.js
+ lib/linter/code-path-analysis/debug-helpers.js
+ lib/linter/code-path-analysis/fork-context.js
+ lib/linter/code-path-analysis/id-generator.js
+ lib/linter/config-comment-parser.js
+ lib/linter/index.js
+ lib/linter/interpolate.js
+ lib/linter/linter.js
+ lib/linter/node-event-generator.js
+ lib/linter/report-translator.js
+ lib/linter/rule-fixer.js
+ lib/linter/rules.js
+ lib/linter/safe-emitter.js
+ lib/linter/source-code-fixer.js
+ lib/linter/timing.js
  lib/options.js
- lib/rules.js
+ lib/rule-tester/index.js
+ lib/rule-tester/rule-tester.js
  lib/rules/accessor-pairs.js
  lib/rules/array-bracket-newline.js
  lib/rules/array-bracket-spacing.js
@@ -457,6 +522,7 @@ Files: CODE_OF_CONDUCT.md
  lib/rules/constructor-super.js
  lib/rules/curly.js
  lib/rules/default-case.js
+ lib/rules/default-param-last.js
  lib/rules/dot-location.js
  lib/rules/dot-notation.js
  lib/rules/eol-last.js
@@ -466,6 +532,7 @@ Files: CODE_OF_CONDUCT.md
  lib/rules/func-name-matching.js
  lib/rules/func-names.js
  lib/rules/func-style.js
+ lib/rules/function-call-argument-newline.js
  lib/rules/function-paren-newline.js
  lib/rules/generator-star-spacing.js
  lib/rules/getter-return.js
@@ -478,6 +545,7 @@ Files: CODE_OF_CONDUCT.md
  lib/rules/implicit-arrow-linebreak.js
  lib/rules/indent-legacy.js
  lib/rules/indent.js
+ lib/rules/index.js
  lib/rules/init-declarations.js
  lib/rules/jsx-quotes.js
  lib/rules/key-spacing.js
@@ -550,6 +618,7 @@ Files: CODE_OF_CONDUCT.md
  lib/rules/no-implicit-coercion.js
  lib/rules/no-implicit-globals.js
  lib/rules/no-implied-eval.js
+ lib/rules/no-import-assign.js
  lib/rules/no-inline-comments.js
  lib/rules/no-inner-declarations.js
  lib/rules/no-invalid-regexp.js
@@ -660,6 +729,7 @@ Files: CODE_OF_CONDUCT.md
  lib/rules/prefer-object-spread.js
  lib/rules/prefer-promise-reject-errors.js
  lib/rules/prefer-reflect.js
+ lib/rules/prefer-regex-literals.js
  lib/rules/prefer-rest-params.js
  lib/rules/prefer-spread.js
  lib/rules/prefer-template.js
@@ -691,6 +761,14 @@ Files: CODE_OF_CONDUCT.md
  lib/rules/template-tag-spacing.js
  lib/rules/unicode-bom.js
  lib/rules/use-isnan.js
+ lib/rules/utils/ast-utils.js
+ lib/rules/utils/fix-tracker.js
+ lib/rules/utils/keywords.js
+ lib/rules/utils/lazy-loading-rule-map.js
+ lib/rules/utils/unicode/index.js
+ lib/rules/utils/unicode/is-emoji-modifier.js
+ lib/rules/utils/unicode/is-regional-indicator-symbol.js
+ lib/rules/utils/unicode/is-surrogate-pair.js
  lib/rules/valid-jsdoc.js
  lib/rules/valid-typeof.js
  lib/rules/vars-on-top.js
@@ -698,58 +776,37 @@ Files: CODE_OF_CONDUCT.md
  lib/rules/wrap-regex.js
  lib/rules/yield-star-spacing.js
  lib/rules/yoda.js
- lib/testers/rule-tester.js
- lib/token-store/backward-token-comment-cursor.js
- lib/token-store/backward-token-cursor.js
- lib/token-store/cursor.js
- lib/token-store/cursors.js
- lib/token-store/decorative-cursor.js
- lib/token-store/filter-cursor.js
- lib/token-store/forward-token-comment-cursor.js
- lib/token-store/forward-token-cursor.js
- lib/token-store/index.js
- lib/token-store/limit-cursor.js
- lib/token-store/padded-token-cursor.js
- lib/token-store/skip-cursor.js
- lib/token-store/utils.js
- lib/util/ajv.js
- lib/util/apply-disable-directives.js
- lib/util/ast-utils.js
- lib/util/config-comment-parser.js
- lib/util/file-finder.js
- lib/util/fix-tracker.js
- lib/util/glob-utils.js
- lib/util/glob.js
- lib/util/hash.js
- lib/util/ignored-paths.js
- lib/util/interpolate.js
- lib/util/keywords.js
- lib/util/lint-result-cache.js
- lib/util/logging.js
- lib/util/module-resolver.js
- lib/util/naming.js
- lib/util/node-event-generator.js
- lib/util/npm-utils.js
- lib/util/path-utils.js
- lib/util/report-translator.js
- lib/util/rule-fixer.js
- lib/util/safe-emitter.js
- lib/util/source-code-fixer.js
- lib/util/source-code-utils.js
- lib/util/source-code.js
- lib/util/timing.js
- lib/util/traverser.js
- lib/util/unicode/index.js
- lib/util/unicode/is-emoji-modifier.js
- lib/util/unicode/is-regional-indicator-symbol.js
- lib/util/unicode/is-surrogate-pair.js
- lib/util/xml-escape.js
+ lib/shared/ajv.js
+ lib/shared/ast-utils.js
+ lib/shared/config-ops.js
+ lib/shared/config-validator.js
+ lib/shared/logging.js
+ lib/shared/naming.js
+ lib/shared/relative-module-resolver.js
+ lib/shared/traverser.js
+ lib/shared/types.js
+ lib/source-code/index.js
+ lib/source-code/source-code.js
+ lib/source-code/token-store/backward-token-comment-cursor.js
+ lib/source-code/token-store/backward-token-cursor.js
+ lib/source-code/token-store/cursor.js
+ lib/source-code/token-store/cursors.js
+ lib/source-code/token-store/decorative-cursor.js
+ lib/source-code/token-store/filter-cursor.js
+ lib/source-code/token-store/forward-token-comment-cursor.js
+ lib/source-code/token-store/forward-token-cursor.js
+ lib/source-code/token-store/index.js
+ lib/source-code/token-store/limit-cursor.js
+ lib/source-code/token-store/padded-token-cursor.js
+ lib/source-code/token-store/skip-cursor.js
+ lib/source-code/token-store/utils.js
  messages/all-files-ignored.txt
  messages/extend-config-missing.txt
  messages/failed-to-read-json.txt
  messages/file-not-found.txt
  messages/no-config-found.txt
  messages/plugin-missing.txt
+ messages/print-config-with-directory-path.txt
  messages/whitespace-found.txt
  packages/eslint-config-eslint/README.md
  packages/eslint-config-eslint/default.yml
@@ -760,10 +817,10 @@ Files: CODE_OF_CONDUCT.md
  templates/rule-change-proposal.md
  templates/rule-proposal.md
  tests/bench/bench.js
- tests/bench/xform-rules.js
  tests/bin/eslint.js
  tests/conf/config-schema.js
  tests/conf/eslint-all.js
+ tests/conf/eslint-recommended.js
  tests/fixtures/.eslintignore
  tests/fixtures/.eslintignore2
  tests/fixtures/.eslintignore_twoGlobstar
@@ -792,6 +849,8 @@ Files: CODE_OF_CONDUCT.md
  tests/fixtures/cli-engine/node_modules/@somenamespace/eslint-formatter-foo/index.js
  tests/fixtures/cli-engine/node_modules/eslint-formatter-bar/index.js
  tests/fixtures/cli-engine/node_modules/foo.js
+ tests/fixtures/cli-engine/overrides-with-dot/.eslintrc.yml
+ tests/fixtures/cli-engine/overrides-with-dot/.test-target.js
  tests/fixtures/cli/.eslintignore_foo
  tests/fixtures/cli/foo/.bar/passing.js
  tests/fixtures/cli/passing.js
@@ -964,17 +1023,11 @@ Files: CODE_OF_CONDUCT.md
  tests/fixtures/config-file/bom/package.json
  tests/fixtures/config-file/broken-package-json/package.json
  tests/fixtures/config-file/ecma-features/.eslintrc.yml
- tests/fixtures/config-file/experimental-object-rest-spread/another-parser/.eslintrc.yml
- tests/fixtures/config-file/experimental-object-rest-spread/another-parser/parser.js
- tests/fixtures/config-file/experimental-object-rest-spread/basic/.eslintrc.yml
- tests/fixtures/config-file/experimental-object-rest-spread/extends/.eslintrc.yml
- tests/fixtures/config-file/experimental-object-rest-spread/extends/common.yml
- tests/fixtures/config-file/experimental-object-rest-spread/subdir/.eslintrc.yml
- tests/fixtures/config-file/experimental-object-rest-spread/subdir/lib/.eslintrc.yml
  tests/fixtures/config-file/extends-chain-2/.eslintrc.json
  tests/fixtures/config-file/extends-chain-2/node_modules/eslint-config-a/index.js
  tests/fixtures/config-file/extends-chain-2/node_modules/eslint-config-a/relative.js
  tests/fixtures/config-file/extends-chain-2/parser.eslintrc.json
+ tests/fixtures/config-file/extends-chain-2/parser.js
  tests/fixtures/config-file/extends-chain-2/relative.eslintrc.json
  tests/fixtures/config-file/extends-chain/.eslintrc.json
  tests/fixtures/config-file/extends-chain/node_modules/eslint-config-a/index.js
@@ -993,6 +1046,12 @@ Files: CODE_OF_CONDUCT.md
  tests/fixtures/config-file/json/.eslintrc
  tests/fixtures/config-file/json/.eslintrc.json
  tests/fixtures/config-file/legacy/.eslintrc
+ tests/fixtures/config-file/node_modules/eslint-config-enable-browser-env.js
+ tests/fixtures/config-file/node_modules/eslint-config-recursive-dependent/index.js
+ tests/fixtures/config-file/node_modules/eslint-config-recursive-dependent/node_modules/eslint-config-recursive-dependency.js
+ tests/fixtures/config-file/node_modules/eslint-plugin-enable-nonexistent-parser.js
+ tests/fixtures/config-file/node_modules/eslint-plugin-with-environment.js
+ tests/fixtures/config-file/node_modules/eslint-plugin-with-two-configs.js
  tests/fixtures/config-file/package-json/package.json
  tests/fixtures/config-file/plugins/.eslintrc.yml
  tests/fixtures/config-file/plugins/.eslintrc2.yml
@@ -1045,6 +1104,8 @@ Files: CODE_OF_CONDUCT.md
  tests/fixtures/config-hierarchy/personal-config/project-with-config/package.json
  tests/fixtures/config-hierarchy/personal-config/project-with-config/subfolder/.eslintrc
  tests/fixtures/config-hierarchy/personal-config/project-without-config/package.json
+ tests/fixtures/config-hierarchy/plugins/node_modules/eslint-plugin-example-with-rules-config.js
+ tests/fixtures/config-hierarchy/plugins/node_modules/eslint-plugin-test.js
  tests/fixtures/config-hierarchy/root-true/parent/.eslintrc
  tests/fixtures/config-hierarchy/root-true/parent/root/.eslintrc
  tests/fixtures/config-hierarchy/root-true/parent/root/wrong-semi.js
@@ -1111,6 +1172,7 @@ Files: CODE_OF_CONDUCT.md
  tests/fixtures/formatters/test/simple.js
  tests/fixtures/glob-util/ignored/.eslintignore
  tests/fixtures/glob-util/node_modules/dependency.js
+ tests/fixtures/glob-util/unignored/.eslintignore
  tests/fixtures/globals-browser.js
  tests/fixtures/globals-nashorn.js
  tests/fixtures/globals-node.js
@@ -1135,6 +1197,16 @@ Files: CODE_OF_CONDUCT.md
  tests/fixtures/max-warnings/.eslintrc
  tests/fixtures/max-warnings/six-warnings.js
  tests/fixtures/missing-semicolon.js
+ tests/fixtures/module-not-found/.eslintrc.yml
+ tests/fixtures/module-not-found/extends-js/.eslintrc.yml
+ tests/fixtures/module-not-found/extends-plugin/.eslintrc.yml
+ tests/fixtures/module-not-found/node_modules/eslint-config-throw.js
+ tests/fixtures/module-not-found/node_modules/eslint-plugin-throw.js
+ tests/fixtures/module-not-found/plugins/.eslintrc.yml
+ tests/fixtures/module-not-found/throw-in-config-itself/.eslintrc.js
+ tests/fixtures/module-not-found/throw-in-extends-js/.eslintrc.yml
+ tests/fixtures/module-not-found/throw-in-extends-plugin/.eslintrc.yml
+ tests/fixtures/module-not-found/throw-in-plugins/.eslintrc.yml
  tests/fixtures/module-resolver/node_modules/foo.js
  tests/fixtures/packagejson/package.json
  tests/fixtures/packagejson/quotes.js
@@ -1155,6 +1227,7 @@ Files: CODE_OF_CONDUCT.md
  tests/fixtures/parsers/enhanced-parser2.js
  tests/fixtures/parsers/enhanced-parser3.js
  tests/fixtures/parsers/line-error.js
+ tests/fixtures/parsers/linter-test-parsers.js
  tests/fixtures/parsers/no-line-error.js
  tests/fixtures/parsers/object-curly-newline/flow-stub-parser-multiline-type-literal.js
  tests/fixtures/parsers/object-curly-newline/flow-stub-parser-multiline.js
@@ -1170,12 +1243,14 @@ Files: CODE_OF_CONDUCT.md
  tests/fixtures/parsers/type-annotations/function-return-type-annotation.js
  tests/fixtures/parsers/type-annotations/variable-declaration-init-type-annotation-no-space.js
  tests/fixtures/parsers/type-annotations/variable-declaration-init-type-annotation.js
+ tests/fixtures/parsers/typescript-parsers/declare-var.js
  tests/fixtures/parsers/typescript-parsers/decorator-with-class-methods.js
  tests/fixtures/parsers/typescript-parsers/decorator-with-class.js
  tests/fixtures/parsers/typescript-parsers/decorator-with-keywords-class-method.js
  tests/fixtures/parsers/typescript-parsers/decorator-with-static-class-methods.js
  tests/fixtures/parsers/typescript-parsers/keyword-with-arrow-function.js
  tests/fixtures/parsers/typescript-parsers/new-parens.js
+ tests/fixtures/parsers/typescript-parsers/object-with-arrow-fn-props.js
  tests/fixtures/parsers/typescript-parsers/type-alias.js
  tests/fixtures/parsers/unknown-nodes/abstract-class-invalid.js
  tests/fixtures/parsers/unknown-nodes/abstract-class-valid.js
@@ -1196,8 +1271,11 @@ Files: CODE_OF_CONDUCT.md
  tests/fixtures/plugin-shorthand/basic/node_modules/@scope/eslint-plugin/index.js
  tests/fixtures/plugin-shorthand/extends/.eslintrc.json
  tests/fixtures/plugin-shorthand/extends/node_modules/@scope/eslint-plugin/index.js
+ tests/fixtures/plugins/node_modules/eslint-plugin-throws-on-load.js
+ tests/fixtures/plugins/node_modules/eslint-plugin-with-rules.js
  tests/fixtures/process-exit.js
  tests/fixtures/processors/custom-processor.js
+ tests/fixtures/processors/pattern-processor.js
  tests/fixtures/processors/test/test-processor.txt
  tests/fixtures/rules/.eslintignore
  tests/fixtures/rules/.jshintignore
@@ -1248,39 +1326,56 @@ Files: CODE_OF_CONDUCT.md
  tests/fixtures/traverse/found.js2
  tests/fixtures/undef.js
  tests/fixtures/utf8-bom.js
+ tests/lib/_utils.js
  tests/lib/api.js
- tests/lib/cli-engine.js
+ tests/lib/cli-engine/_utils.js
+ tests/lib/cli-engine/cascading-config-array-factory.js
+ tests/lib/cli-engine/cli-engine.js
+ tests/lib/cli-engine/config-array-factory.js
+ tests/lib/cli-engine/config-array/config-array.js
+ tests/lib/cli-engine/config-array/config-dependency.js
+ tests/lib/cli-engine/config-array/extracted-config.js
+ tests/lib/cli-engine/config-array/override-tester.js
+ tests/lib/cli-engine/file-enumerator.js
+ tests/lib/cli-engine/formatters/checkstyle.js
+ tests/lib/cli-engine/formatters/codeframe.js
+ tests/lib/cli-engine/formatters/compact.js
+ tests/lib/cli-engine/formatters/html.js
+ tests/lib/cli-engine/formatters/jslint-xml.js
+ tests/lib/cli-engine/formatters/json-with-metadata.js
+ tests/lib/cli-engine/formatters/json.js
+ tests/lib/cli-engine/formatters/junit.js
+ tests/lib/cli-engine/formatters/stylish.js
+ tests/lib/cli-engine/formatters/table.js
+ tests/lib/cli-engine/formatters/tap.js
+ tests/lib/cli-engine/formatters/unix.js
+ tests/lib/cli-engine/formatters/visualstudio.js
+ tests/lib/cli-engine/ignored-paths.js
+ tests/lib/cli-engine/lint-result-cache.js
+ tests/lib/cli-engine/load-rules.js
  tests/lib/cli.js
- tests/lib/code-path-analysis/code-path-analyzer.js
- tests/lib/code-path-analysis/code-path.js
- tests/lib/config.js
- tests/lib/config/autoconfig.js
- tests/lib/config/config-file.js
- tests/lib/config/config-initializer.js
- tests/lib/config/config-ops.js
- tests/lib/config/config-rule.js
- tests/lib/config/config-validator.js
- tests/lib/config/environments.js
- tests/lib/config/plugins.js
- tests/lib/formatters/checkstyle.js
- tests/lib/formatters/codeframe.js
- tests/lib/formatters/compact.js
- tests/lib/formatters/html.js
- tests/lib/formatters/jslint-xml.js
- tests/lib/formatters/json-with-metadata.js
- tests/lib/formatters/json.js
- tests/lib/formatters/junit.js
- tests/lib/formatters/stylish.js
- tests/lib/formatters/table.js
- tests/lib/formatters/tap.js
- tests/lib/formatters/unix.js
- tests/lib/formatters/visualstudio.js
- tests/lib/linter.js
- tests/lib/load-rules.js
+ tests/lib/init/autoconfig.js
+ tests/lib/init/config-file.js
+ tests/lib/init/config-initializer.js
+ tests/lib/init/config-rule.js
+ tests/lib/init/npm-utils.js
+ tests/lib/init/source-code-utils.js
+ tests/lib/linter/apply-disable-directives.js
+ tests/lib/linter/code-path-analysis/code-path-analyzer.js
+ tests/lib/linter/code-path-analysis/code-path.js
+ tests/lib/linter/config-comment-parser.js
+ tests/lib/linter/interpolate.js
+ tests/lib/linter/linter.js
+ tests/lib/linter/node-event-generator.js
+ tests/lib/linter/report-translator.js
+ tests/lib/linter/rule-fixer.js
+ tests/lib/linter/rules.js
+ tests/lib/linter/safe-emitter.js
+ tests/lib/linter/source-code-fixer.js
  tests/lib/options.js
- tests/lib/rules.js
+ tests/lib/rule-tester/no-test-runners.js
+ tests/lib/rule-tester/rule-tester.js
  tests/lib/rules/_set-default-parser.js
- tests/lib/rules/_utils.js
  tests/lib/rules/accessor-pairs.js
  tests/lib/rules/array-bracket-newline.js
  tests/lib/rules/array-bracket-spacing.js
@@ -1304,6 +1399,7 @@ Files: CODE_OF_CONDUCT.md
  tests/lib/rules/consistent-this.js
  tests/lib/rules/constructor-super.js
  tests/lib/rules/default-case.js
+ tests/lib/rules/default-param-last.js
  tests/lib/rules/dot-location.js
  tests/lib/rules/dot-notation.js
  tests/lib/rules/eol-last.js
@@ -1313,6 +1409,7 @@ Files: CODE_OF_CONDUCT.md
  tests/lib/rules/func-name-matching.js
  tests/lib/rules/func-names.js
  tests/lib/rules/func-style.js
+ tests/lib/rules/function-call-argument-newline.js
  tests/lib/rules/function-paren-newline.js
  tests/lib/rules/generator-star-spacing.js
  tests/lib/rules/getter-return.js
@@ -1396,6 +1493,7 @@ Files: CODE_OF_CONDUCT.md
  tests/lib/rules/no-implicit-coercion.js
  tests/lib/rules/no-implicit-globals.js
  tests/lib/rules/no-implied-eval.js
+ tests/lib/rules/no-import-assign.js
  tests/lib/rules/no-inline-comments.js
  tests/lib/rules/no-inner-declarations.js
  tests/lib/rules/no-invalid-regexp.js
@@ -1504,6 +1602,7 @@ Files: CODE_OF_CONDUCT.md
  tests/lib/rules/prefer-object-spread.js
  tests/lib/rules/prefer-promise-reject-errors.js
  tests/lib/rules/prefer-reflect.js
+ tests/lib/rules/prefer-regex-literals.js
  tests/lib/rules/prefer-rest-params.js
  tests/lib/rules/prefer-spread.js
  tests/lib/rules/prefer-template.js
@@ -1535,6 +1634,8 @@ Files: CODE_OF_CONDUCT.md
  tests/lib/rules/template-tag-spacing.js
  tests/lib/rules/unicode-bom.js
  tests/lib/rules/use-isnan.js
+ tests/lib/rules/utils/ast-utils.js
+ tests/lib/rules/utils/fix-tracker.js
  tests/lib/rules/valid-jsdoc.js
  tests/lib/rules/valid-typeof.js
  tests/lib/rules/vars-on-top.js
@@ -1542,37 +1643,22 @@ Files: CODE_OF_CONDUCT.md
  tests/lib/rules/wrap-regex.js
  tests/lib/rules/yield-star-spacing.js
  tests/lib/rules/yoda.js
- tests/lib/testers/no-test-runners.js
- tests/lib/testers/rule-tester.js
- tests/lib/token-store.js
- tests/lib/util/apply-disable-directives.js
- tests/lib/util/ast-utils.js
- tests/lib/util/config-comment-parser.js
- tests/lib/util/file-finder.js
- tests/lib/util/fix-tracker.js
- tests/lib/util/glob-utils.js
- tests/lib/util/ignored-paths.js
- tests/lib/util/interpolate.js
- tests/lib/util/lint-result-cache.js
- tests/lib/util/module-resolver.js
- tests/lib/util/naming.js
- tests/lib/util/node-event-generator.js
- tests/lib/util/npm-utils.js
- tests/lib/util/path-utils.js
- tests/lib/util/report-translator.js
- tests/lib/util/rule-fixer.js
- tests/lib/util/safe-emitter.js
- tests/lib/util/source-code-fixer.js
- tests/lib/util/source-code-utils.js
- tests/lib/util/source-code.js
- tests/lib/util/traverser.js
+ tests/lib/shared/config-ops.js
+ tests/lib/shared/config-validator.js
+ tests/lib/shared/naming.js
+ tests/lib/shared/traverser.js
+ tests/lib/source-code/source-code.js
+ tests/lib/source-code/token-store.js
  tests/tests.htm
+ tests/tools/code-sample-minimizer.js
  tests/tools/eslint-fuzzer.js
  tests/tools/internal-rules/consistent-docs-description.js
  tests/tools/internal-rules/consistent-docs-url.js
  tests/tools/internal-rules/consistent-meta-messages.js
  tests/tools/internal-rules/multiline-comment-style.js
  tests/tools/internal-rules/no-invalid-meta.js
+ tests/tools/loose-parser.js
+ tools/code-sample-minimizer.js
  tools/eslint-fuzzer.js
  tools/fuzzer-runner.js
  tools/internal-rules/consistent-docs-description.js
@@ -1594,6 +1680,8 @@ License: UNKNOWN
  FIXME
 
 Files: Xtypes/package.json
+ debian/patches/020200107~2c28fbb.patch
+ debian/patches/020210821~f3cb320.patch
  package.json
  packages/eslint-config-eslint/package.json
 Copyright: NONE
@@ -1623,11 +1711,6 @@ License: UNKNOWN
 
 Files: Xtypes/LICENSE
 Copyright: Microsoft Corporation.
-License: Expat
- FIXME
-
-Files: lib/config/config-ops.js
-Copyright: 2012, Nicholas Fisher
 License: Expat
  FIXME
 
@@ -1662,12 +1745,6 @@ License: UNKNOWN
 
 Files: tests/lib/rules/no-unused-labels.js
 Copyright: continue C; bar(); } }",
-License: UNKNOWN
- FIXME
-
-Files: debian/source/lintian-overrides
-Copyright: debian/copyright GPL-3+
-  debian/copyright gpl-3+
 License: UNKNOWN
  FIXME
 

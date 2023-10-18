@@ -1,0 +1,28 @@
+Description: Chore: don't check Program.start in SourceCode#getComments
+Origin: upstream, https://github.com/eslint/eslint/commit/5f74642
+Bug: https://github.com/eslint/eslint/issues/14744
+Bug: https://github.com/eslint/eslint/issues/14748
+Author: Milos Djermanovic <milos.djermanovic@gmail.com>
+Last-Update: 2022-02-27
+---
+This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
+--- a/lib/source-code/source-code.js
++++ b/lib/source-code/source-code.js
+@@ -351,7 +351,7 @@
+             let currentToken = this.getTokenBefore(node, { includeComments: true });
+ 
+             while (currentToken && isCommentToken(currentToken)) {
+-                if (node.parent && (currentToken.start < node.parent.start)) {
++                if (node.parent && node.parent.type !== "Program" && (currentToken.start < node.parent.start)) {
+                     break;
+                 }
+                 comments.leading.push(currentToken);
+@@ -363,7 +363,7 @@
+             currentToken = this.getTokenAfter(node, { includeComments: true });
+ 
+             while (currentToken && isCommentToken(currentToken)) {
+-                if (node.parent && (currentToken.end > node.parent.end)) {
++                if (node.parent && node.parent.type !== "Program" && (currentToken.end > node.parent.end)) {
+                     break;
+                 }
+                 comments.trailing.push(currentToken);

@@ -5,6 +5,7 @@ Maintainer: Debian Javascript Maintainers <pkg-javascript-devel@lists.alioth.deb
 Uploaders:
  Jonas Smedegaard <dr@jones.dk>,
 Build-Depends:
+ cmark-gfm <!nodoc>,
  debhelper-compat (= 13),
  help2man <!nodoc>,
  jq,
@@ -27,7 +28,7 @@ Build-Depends:
  node-eslint-rule-composer <!nocheck>,
  node-eslint-utils <!nocheck> <!nodoc>,
  node-eslint-visitor-keys <!nocheck> <!nodoc>,
- node-espree <!nocheck> <!nodoc>,
+ node-espree (>= 7.3.0) <!nocheck> <!nodoc>,
  node-esprima <!nocheck>,
  node-esquery <!nocheck> <!nodoc>,
  node-estraverse <!nocheck>,
@@ -36,23 +37,22 @@ Build-Depends:
  node-functional-red-black-tree <!nocheck> <!nodoc>,
  node-glob <!nocheck>,
  node-globals <!nocheck> <!nodoc>,
- node-ignore <!nocheck> <!nodoc>,
+ node-ignore (>= 5.2.0) <!nocheck> <!nodoc>,
  node-import-fresh <!nocheck> <!nodoc>,
  node-imurmurhash <!nocheck> <!nodoc>,
  node-inquirer <!nocheck>,
  node-js-yaml <!nocheck>,
  node-json-stable-stringify <!nocheck>,
- node-leche <!nocheck>,
  node-levn <!nocheck>,
  node-lodash <!nocheck> <!nodoc>,
+ node-memfs <!nocheck>,
  node-mkdirp <!nocheck> <!nodoc>,
- node-mock-fs <!nocheck>,
- node-natural-compare <!nocheck>,
  node-optionator <!nocheck> <!nodoc>,
  node-path-is-inside <!nocheck> <!nodoc>,
  node-progress <!nocheck>,
  node-proxyquire <!nocheck>,
- node-regenerate-unicode-properties <!nocheck> <!nodoc>,
+ node-recast <!nocheck>,
+ node-regenerate-unicode-properties (>= 10) <!nocheck> <!nodoc>,
  node-regexpp <!nocheck> <!nodoc>,
  node-semver <!nocheck>,
  node-shelljs <!nocheck>,
@@ -61,9 +61,8 @@ Build-Depends:
  node-strip-json-comments <!nocheck>,
  node-text-table <!nocheck>,
  node-temp <!nocheck>,
- nodejs,
- pandoc <!nodoc>,
-Standards-Version: 4.6.0
+ node-v8-compile-cache <!nocheck>,
+Standards-Version: 4.6.1
 Homepage: https://eslint.org/
 Vcs-Browser: https://salsa.debian.org/js-team/eslint
 Vcs-Git: https://salsa.debian.org/js-team/eslint.git
@@ -78,50 +77,51 @@ Depends:
  node-doctrine,
  node-eslint-visitor-keys,
  node-eslint-scope,
- node-espree,
+ node-espree (>= 7.3.0),
  node-esquery,
  node-estraverse,
  node-eslint-utils,
  node-esutils,
  node-file-entry-cache,
  node-functional-red-black-tree,
- node-glob,
+ node-glob-parent,
  node-globals,
- nodejs,
  node-import-fresh,
  node-imurmurhash,
- node-ignore,
+ node-ignore (>= 5.2.0),
+ node-is-glob,
  node-json-stable-stringify,
  node-levn,
  node-lodash,
+ node-memfs,
  node-mkdirp,
- node-natural-compare,
  node-optionator,
- node-path-is-inside,
  node-progress,
- node-regenerate-unicode-properties,
+ node-regenerate-unicode-properties (>= 10),
  node-regexpp,
  node-semver,
  node-strip-json-comments,
  node-types-estree,
  node-types-json-schema,
+ node-v8-compile-cache,
+ nodejs:any (>= 12.22.0),
  ${misc:Depends},
 Recommends:
  node-chalk,
- node-inquirer,
  node-js-yaml,
  node-strip-ansi,
  node-text-table,
 Suggests:
- node-babel-code-frame (>= 7),
  node-babel-eslint,
- node-table,
  node-esprima,
  node-esprima-fb,
+ node-inquirer,
 Provides:
  node-eslint (= ${source:Version}),
  node-eslint-config-eslint (= ${config:Version}),
  node-types-eslint (= ${types:Version}),
+Breaks:
+ node-mysticatea-eslint-plugin (<< 12),
 Description: AST-based pattern checker for JavaScript
  ESLint is a tool for identifying and reporting on patterns
  found in ECMAScript/JavaScript code.
@@ -136,5 +136,4 @@ Description: AST-based pattern checker for JavaScript
  Some uses of ESLint require additional packages:
   * Use of parsers other than the default (Espree) require that parser,
     e.g. node-babel-eslint, node-esprima, or node-esprima-fb.
-  * Output format "code-frame" requires node-babel-code-frame.
-  * Output format "table" requires node-table and node-pluralize.
+  * Use of option --init require package node-inquirer.
