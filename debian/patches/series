@@ -30,3 +30,4 @@
 2008_avoid_json-stable-stringify-without-jsonify.patch
 2010_privacy.patch
 2011_use_newer_eslint-scope.patch
+2012_fix-for-ajv-8.patch
