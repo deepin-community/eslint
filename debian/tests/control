@@ -27,3 +27,4 @@ Depends:
  node-sinon,
  node-temp,
  node-text-table,
+Restrictions: allow-stderr

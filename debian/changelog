@@ -1,3 +1,37 @@
+eslint (6.4.0~dfsg+~6.1.9-11) unstable; urgency=medium
+
+  * Team upload
+  * Temporary allow stderr in tests
+
+ -- Yadd <yadd@debian.org>  Thu, 14 Dec 2023 19:24:42 +0400
+
+eslint (6.4.0~dfsg+~6.1.9-10) unstable; urgency=medium
+
+  * Team upload
+  * Update ajv-8 patch
+  * Back to unstable
+
+ -- Yadd <yadd@debian.org>  Thu, 14 Dec 2023 11:58:29 +0400
+
+eslint (6.4.0~dfsg+~6.1.9-9) experimental; urgency=medium
+
+  * Team upload
+  * Update ajv-8 patch
+
+ -- Yadd <yadd@debian.org>  Sat, 09 Dec 2023 17:41:22 +0400
+
+eslint (6.4.0~dfsg+~6.1.9-8) experimental; urgency=medium
+
+  * Team upload
+  * Set upstream metadata fields: Repository-Browse.
+  * Update lintian override info format in d/source/lintian-overrides
+    on line 2-3, 6-13.
+  * Set upstream metadata fields: Bug-Database, Bug-Submit.
+  * Update standards version to 4.6.2, no changes needed.
+  * Add fix for node-ajv >= 8
+
+ -- Yadd <yadd@debian.org>  Fri, 08 Dec 2023 12:18:57 +0400
+
 eslint (6.4.0~dfsg+~6.1.9-7) unstable; urgency=medium
 
   * update TODOs, thanks to Jérémy Lal (see bug#1004244)
